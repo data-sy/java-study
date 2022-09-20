@@ -17,7 +17,6 @@ public class 제5장_3 {
 		다영.start();
 		라영.start();
 		
-		
 	}
 
 }

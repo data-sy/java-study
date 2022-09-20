@@ -1,6 +1,6 @@
-package ABC_company;
 
-public class 제5장 {
+
+public class 제5장_1 {
 
 	public static void main(String[] args) {
 		
@@ -17,6 +17,7 @@ public class 제5장 {
 			System.out.println(score[i]);
 		}
 		
+		// 랜덤
 		double ran = Math.random();
 		double ran100 = ran*100;
 		System.out.println(ran100);
@@ -36,7 +37,18 @@ public class 제5장 {
 			System.out.println("오른쪽");
 		}
 		
+		// 예외처리
+//		String 숫자같은문자 = "12345";
+//		int 정수숫자 = Integer.parseInt(숫자같은문자);
 		
+		try {
+			String 숫자같은문자 = "홍길동";
+			int 정수숫자 = Integer.parseInt(숫자같은문자);
+		} catch(Exception e){
+			System.out.println("오류발생");
+			System.out.println("오류 메세지 : " + e);
+		}
+
 		
 	}
 

@@ -1,6 +1,6 @@
-package Chapter1;
+package chap01;
 
-public class Ex02_Max3Method {
+public class Ex102_Max3Method {
 	
 	public static void main(String[] args) {
 		

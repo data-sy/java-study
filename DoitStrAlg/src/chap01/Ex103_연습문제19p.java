@@ -1,6 +1,6 @@
-package Chapter1;
+package chap01;
 
-public class Ex03_연습문제19p {
+public class Ex103_연습문제19p {
 	
 	public static void main(String[] args) {
 		

@@ -1,8 +1,8 @@
-package Chapter1;
+package chap01;
 
 import java.util.Scanner;
 
-public class Ex06_양음0판단 {
+public class Ex106_양음0판단 {
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);

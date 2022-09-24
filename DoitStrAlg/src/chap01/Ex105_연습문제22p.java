@@ -1,6 +1,6 @@
-package Chapter1;
+package chap01;
 
-public class Ex05_연습문제22p {
+public class Ex105_연습문제22p {
 	// 이 메서드가 Ex04_Median.java 의 책풀이메서드(med3Book)에 비해 효율이 떨어지는 이유를 설명하시오.
 	
 	// 가독성과 이해도는 제일 좋은 코드라고 생각했는데, 성능은 제일 안 좋대

@@ -1,8 +1,8 @@
-package Chapter1;
+package chap01;
 
 import java.util.Scanner;
 
-public class Ex01_세값의최댓값 {
+public class Ex101_세값의최댓값 {
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);

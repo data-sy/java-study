@@ -1,6 +1,6 @@
-package Chapter1;
+package chap01;
 
-public class Ex07_조건판단과분기 {
+public class Ex107_조건판단과분기 {
 
 	public static void main(String[] args) {
 		// 실습 1-4와 1-5는 코드 길이가 같고, 프로그램의 흐름을 3개로 분기하는 것 처럼 보일거야

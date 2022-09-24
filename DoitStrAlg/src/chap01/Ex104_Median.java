@@ -1,6 +1,6 @@
-package Chapter1;
+package chap01;
 
-public class Ex04_Median {
+public class Ex104_Median {
 
 	public static void main(String[] args) {
 		

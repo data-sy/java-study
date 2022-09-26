@@ -39,7 +39,7 @@ public class Ex200_반복문_이론 {
 			System.out.print(i + " ");
 			i+=i;
 		}
-	
+		System.out.println();
 	// 34p
 		// do while 문
 		// do {루프 본문} while(제어식);   <- 끝에 세미콜론 있음
@@ -52,6 +52,9 @@ public class Ex200_반복문_이론 {
 	// 37p
 		// 단순 대입(=) 혹은 복합 대입(+=, /= 등) 연산자를 사용하면 대입한 뒤 왼쪽 피연산자의 형,값을 얻을 수 있음
 		// 예
+		int a;
+		int b = a = 1; // a=1의 결괏값으로 int형 1을 얻고, b에 이것이 대입됨 
+		System.out.println(b);
 	}
 
 }

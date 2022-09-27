@@ -11,7 +11,10 @@ public class Ex209_곱셈표 {
 			}
 			System.out.println();
 		}
-		// %3d는 결과물을 3자리로 출력하라는 말
+		
+		// printf
+		// System.out.printf("출력 서식",출력할 내용);
+		// %3d는 결과물을 3자리로 출력하라는 말	
 		
 	}
 

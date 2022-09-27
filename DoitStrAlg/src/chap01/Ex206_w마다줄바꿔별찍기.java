@@ -57,7 +57,7 @@ public class Ex206_w마다줄바꿔별찍기 {
 		// test 0번 반복이 가능한가
 		System.out.println("test ".repeat(1));
 		System.out.println("test ".repeat(0));
-		// 가능해. 하지만 빈줄 출력하고 한 줄 줄바꿈 하기 때문에 (커서 2번 엔터)
+		// 가능해. f하지만 빈줄 출력하고 한 줄 줄바꿈 하기 때문에 (커서 2번 엔터)
 		// 아얘 출력하지 않는 것과는 다른 결과야. (커서 1번 엔터)
 		// 그래서 개선코드에서 처럼 if (rest!=0) 조건 필요해
 

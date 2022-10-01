@@ -1,6 +1,6 @@
-package chap2;
+package chap02;
 
-public class Ex202_배열요소의최댓값 {
+public class Ex102_배열요소의최댓값 {
 
 	public static void main(String[] args) {
 		

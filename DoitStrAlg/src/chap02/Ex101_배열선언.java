@@ -1,6 +1,6 @@
-package chap2;
+package chap02;
 
-public class Ex201_배열선언 {
+public class Ex101_배열선언 {
 
 	public static void main(String[] args) {
 		

@@ -22,8 +22,6 @@ public class Ex103_배열요소최댓값메서드로 {
 		
 	}
 	
-	
-	
 	static int maxOf(int[] a){
 		int max = a[0];
 		for (int i=1;i<a.length; i++) {

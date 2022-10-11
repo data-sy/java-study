@@ -3,7 +3,7 @@ package chap02;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class Ex107_역순정렬 {
+public class Ex109_역순정렬 {
 
     static void swap(int[] a, int idx1, int idx2) {
         int t = a[idx1];

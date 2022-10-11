@@ -12,6 +12,7 @@ public class Ex103_배열요소최댓값메서드로 {
 		int n = sc.nextInt();
 		
 		int[] height = new int[n];
+		// 배열의 길이가 프로그램을 컴파일 할 때가 아니라 실행할(runtime) 때 결정 
 		
 		for (int i=0; i<n; i++) {
 			System.out.print("height["+i+"] : ");

@@ -30,7 +30,7 @@ public class Ex200_반복문_이론 {
 			if (i==5) break;
 			System.out.print(i);
 		}
-		System.out.println();		
+		System.out.println();
 		// 업데이트
 		// 루프 본문을 실행한 뒤에 평가, 실행하는 식
 		// 쉼표로 구분하여 여러 개의 식 작성 가능

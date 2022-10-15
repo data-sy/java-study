@@ -14,11 +14,6 @@ public class Ex101_세값의최댓값 {
 		System.out.print("c의 값 : ");
 		int c = sc.nextInt();
 		
-		// 순차구조, 선택구조
-		
-		// System.in은 키보드와 연결된 표준 입력 스트림
-		
-		
 		int max = a;
 		if (b>max) {
 			max = b;

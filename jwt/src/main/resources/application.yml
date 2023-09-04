@@ -1,0 +1,4 @@
+jwt:
+#  header: Authorization
+  secret: nCAzv4mf89hY+GwHVxvxDc2BsZO1o2uyq1l/h9ePbr0=
+#  token-validity-in-seconds: 86400

@@ -35,9 +35,9 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeRequests()    // 요청들에 대한 접근 제한
                 .antMatchers("/api/user").permitAll()   // 해당 요청에 한해 모두 접근 가능
-//                .anyRequest().authenticated()   // 나머지 요쳥들은 모두 인증되어야 한다.
+                .anyRequest().authenticated()   // 나머지 요쳥들은 모두 인증되어야 한다.
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                    .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

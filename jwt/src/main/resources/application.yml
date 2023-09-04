@@ -1,3 +1,10 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost/test"
+    username: "root"
+    password: "Show0715!"    # 맥북, 배포 서버
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
 jwt:
 #  header: Authorization
   secret: nCAzv4mf89hY+GwHVxvxDc2BsZO1o2uyq1l/h9ePbr0=

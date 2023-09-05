@@ -28,16 +28,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()       // rest api 사용하므로
+                .csrf().disable()       // rest api 사용하므로 (이걸 체크하지 않으면 post가 정상적으로 수행되지 않음)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()    // 요청들에 대한 접근 제한
-                .antMatchers("/api/user").permitAll()   // 해당 요청에 한해 모두 접근 가능
-                .anyRequest().authenticated()   // 나머지 요쳥들은 모두 인증되어야 한다.
+                    .antMatchers("/api/**").permitAll()   // 해당 요청에 한해 모두 접근 가능
+//                    .anyRequest().authenticated()   // 나머지 요쳥들은 모두 인증되어야 한다.
                 .and()
-                    .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

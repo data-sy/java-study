@@ -4,8 +4,20 @@ spring:
     username: "root"
     password: "Show0715!"    # 맥북, 배포 서버
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 jwt:
-#  header: Authorization
+  #  header: Authorization
   secret: nCAzv4mf89hY+GwHVxvxDc2BsZO1o2uyq1l/h9ePbr0=
 #  token-validity-in-seconds: 86400

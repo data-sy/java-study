@@ -1,17 +1,11 @@
 package com.study.jwt;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.sql.DataSource;
+import java.util.Optional;
 
-@Repository
-public class UserRepository {
-
-    private final JdbcTemplate jdbcTemplate;
-
-    public UserRepository(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByUserEmailAndUserPassword(String email, String password);
+    Optional<User> findByUserEmail(String email);
+    boolean existsUsersByUserEmail(String email);
 }

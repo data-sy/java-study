@@ -1,56 +1,71 @@
 package com.jwt.jwttutorial.config;
 
+import com.jwt.jwttutorial.jwt.JwtFilter;
+import com.jwt.jwttutorial.jwt.TokenProvider;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
+@EnableMethodSecurity
+@Configuration
 public class SecurityConfig {
 
-//    private final JwtTokenProvider jwtTokenProvider;
-//
-//    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
-//        this.jwtTokenProvider = jwtTokenProvider;
-//    }
+    private final TokenProvider tokenProvider;
 
-//    @Bean
-//    public BCryptPasswordEncoder encoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    public SecurityConfig(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
 
-    // h2 사용 시 : h2 접근 허용
-//    @Bean
-//    public WebSecurityCustomizer configure(){
-//        return (web) -> web.ignoring()
-//                .requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-//                .requestMatchers(new AntPathRequestMatcher("/favicon.ico"));
-//    }
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/api/hello").permitAll()
-                // antMatchers 안 되면 이거 사용
-//                .requestMatchers(new AntPathRequestMatcher("/api/hello")).permitAll()
-                .anyRequest().authenticated();
-//                .csrf().disable()       // rest api 사용하므로 (이걸 체크하지 않으면 post가 정상적으로 수행되지 않음)
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .formLogin().disable()
-//                .httpBasic().disable()
-//                .authorizeRequests()    // 요청들에 대한 접근 제한
-//                .antMatchers("/api/**").permitAll()   // 해당 요청에 한해 모두 접근 가능
-////                    .anyRequest().authenticated()   // 나머지 요쳥들은 모두 인증되어야 한다.
-//                .and()
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())       // rest api, token 사용하므로
+
+                // 우리가 만들어둔 필터들 시큐리티 로직에 적용필터 적용
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+//                .exceptionHandling(exceptionHandling -> exceptionHandling
+//                        .accessDeniedHandler(jwtAccessDeniedHandler)
+//                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                )
+//                // 필터 2개 안 되면 jwt는 따로 만들어서 apply
+//                .apply(new JwtSecurityConfig(tokenProvider));
+
+                // 요청들 접근 제한
+                .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                        // 해당 요청 접근 허용
+                        .requestMatchers(new AntPathRequestMatcher("/api/hello")).permitAll()
+                        // 나머지 요청은 모두 인증
+                        .anyRequest().authenticated()
+                )
+                // 나중에 path 추가
+                // "/api/authenticate", "/api/signup"
+
+                // 사용하지 않는 것들 비활성화
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .formLogin().disable()
+                .httpBasic().disable();
+
         return http.build();
     }
 
 }
+
 

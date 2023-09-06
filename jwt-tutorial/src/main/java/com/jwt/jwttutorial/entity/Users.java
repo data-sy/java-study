@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,5 +32,9 @@ public class Users {
     // 활셩화 여부
     @JsonIgnore
     private boolean activated;
+
+    // 양방향 매핑
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserAuthority> authorities = new HashSet<>();
 
 }

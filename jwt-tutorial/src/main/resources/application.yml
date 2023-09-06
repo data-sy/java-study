@@ -12,13 +12,13 @@ spring:
         show_sql: true
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-jwt:
-#  header: Authorization
-  # HS512 ????  ( 512bit = 64byte ??? secret key )
-  # HS256 ???? ??
-  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1izoifn4ib290LWp3dC10dXRvcmlhbC1_2=zZWNyZXQtc2lsdmVWNoLXNwcmluZy1ib290LWp3hsdhtdC10dXRvcmlhbC1zZWyZX
-#  token-validity-in-seconds: 86400
 
+jwt:
+  header: Authorization
+  # HS512 ( 512bit = 64byte secret key )
+  # HS256 
+  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+#  token-validity-in-seconds: 86400
 
 logging:
   level:

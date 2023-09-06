@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         // 해당 요청 접근 허용
                         .requestMatchers(new AntPathRequestMatcher("/api/hello")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/authenticate")).permitAll()
                         // 나머지 요청은 모두 인증
                         .anyRequest().authenticated()
                 )

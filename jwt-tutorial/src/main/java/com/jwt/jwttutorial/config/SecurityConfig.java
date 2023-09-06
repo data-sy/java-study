@@ -1,8 +1,9 @@
 package com.jwt.jwttutorial.config;
 
+import com.jwt.jwttutorial.jwt.JwtAccessDeniedHandler;
+import com.jwt.jwttutorial.jwt.JwtAuthenticationEntryPoint;
 import com.jwt.jwttutorial.jwt.JwtFilter;
 import com.jwt.jwttutorial.jwt.TokenProvider;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -21,9 +22,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-    public SecurityConfig(TokenProvider tokenProvider) {
+    public SecurityConfig(TokenProvider tokenProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.tokenProvider = tokenProvider;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
     @Bean
@@ -39,12 +44,14 @@ public class SecurityConfig {
                 // 우리가 만들어둔 필터들 시큐리티 로직에 적용필터 적용
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
 //                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .accessDeniedHandler(jwtAccessDeniedHandler)
-//                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                )
 //                // 필터 2개 안 되면 jwt는 따로 만들어서 apply
 //                .apply(new JwtSecurityConfig(tokenProvider));
+
+                // 잘못된 접근에 대한 예외처리
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
 
                 // 요청들 접근 제한
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests

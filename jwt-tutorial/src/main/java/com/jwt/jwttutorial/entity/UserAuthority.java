@@ -1,15 +1,15 @@
 package com.jwt.jwttutorial.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class UserAuthority {
 
@@ -18,7 +18,7 @@ public class UserAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userAuthoId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private Users user;
 

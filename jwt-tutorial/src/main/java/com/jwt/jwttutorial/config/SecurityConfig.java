@@ -58,11 +58,11 @@ public class SecurityConfig {
                         // 해당 요청 접근 허용
                         .requestMatchers(new AntPathRequestMatcher("/api/hello")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/authenticate")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/signup")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
                         // 나머지 요청은 모두 인증
                         .anyRequest().authenticated()
                 )
-                // 나중에 path 추가
-                // "/api/authenticate", "/api/signup"
 
                 // 사용하지 않는 것들 비활성화
                 .sessionManagement(sessionManagement ->

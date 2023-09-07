@@ -10,6 +10,7 @@ select * from users;
 select * from authority;
 select * from user_authority;
 
+
 -- DROP & CREATE
 DROP TABLE IF EXISTS user_authority;
 DROP TABLE IF EXISTS users;

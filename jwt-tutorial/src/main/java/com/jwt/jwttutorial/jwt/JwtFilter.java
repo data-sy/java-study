@@ -33,6 +33,7 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String token = resolveToken(httpServletRequest);
         String requestURI = httpServletRequest.getRequestURI();
+        logger.debug("doFilter 들어옴");
 
         // 토큰 유효성 검사
         if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {

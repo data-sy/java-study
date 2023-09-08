@@ -1,8 +1,12 @@
 package com.jwt.jwttutorial.jwt;
 
+import com.jwt.jwttutorial.redis.UnauthorizedException;
+import com.jwt.jwttutorial.redis.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,16 +27,31 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+
     private static final String AUTHORITIES_KEY = "auth";
+
+    private final long accessTokenValidityInMilliseconds;
+    private final long refreshTokenValidityInMilliseconds;
+    private final RedisUtil redisUtil;
+
     private final Key key;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public TokenProvider(
+            @Value("${jwt.secret}") String secretKey,
+            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInMilliseconds,
+            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInMilliseconds,
+            RedisUtil redisUtil) {
+        this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds*1000;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds*1000;
+        this.redisUtil = redisUtil;
         byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
     // Authentication객체의 권한정보를 담아 jwt 토큰 반환
     public JwtToken generateToken(Authentication authentication) {
+        long now = (new Date()).getTime();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -42,13 +61,15 @@ public class TokenProvider {
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS256)
-                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
+                .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
                 .compact();
 
         //Refresh Token 생성 (만료시간 3일)
         String refreshToken = Jwts.builder()
-                .signWith(key, SignatureAlgorithm.HS256)
-                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 60 * 36))
+                // 여기에도 겟네임 해줘야 하나? 나중에 안 되면 여기 문제일 수 있음 (아래 getAuthentication에서 getSubject를 하므로 필요할 듯!)
+                .setSubject(authentication.getName())
+                .signWith(key)
+                .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
                 .compact();
 
         return JwtToken.builder()
@@ -59,9 +80,9 @@ public class TokenProvider {
     }
 
     // jwt 토큰에 담겨있는 권한정보를 이용해서 Authentication객체 반환
-    public Authentication getAuthentication(String accessToken) {
+    public Authentication getAuthentication(String token) {
         //토큰 복호화
-        Claims claims = parseClaims(accessToken);
+        Claims claims = parseClaims(token);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -80,6 +101,10 @@ public class TokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            logger.info("validate 들어옴");
+            if (redisUtil.hasKeyBlackList(token)) {
+                throw new UnauthorizedException("이미 탈퇴한 회원입니다"); //////////// 로그아웃 아닌가??
+            }
             return true;
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token. 잘못된 JWT 서명입니다.", e);
@@ -89,6 +114,8 @@ public class TokenProvider {
             log.info("Unsupported JWT Token. 지원되지 않는 JWT 토큰입니다.", e);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty. JWT 토큰이 잘못되었습니다.", e);
+        } catch (UnauthorizedException e) {
+            logger.info("이미 탈퇴한 회원입니다.");
         }
         return false;
     }

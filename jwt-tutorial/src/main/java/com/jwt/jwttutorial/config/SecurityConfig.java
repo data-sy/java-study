@@ -6,6 +6,7 @@ import com.jwt.jwttutorial.jwt.JwtFilter;
 import com.jwt.jwttutorial.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @EnableMethodSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig {
 
@@ -58,6 +60,7 @@ public class SecurityConfig {
                         // 해당 요청 접근 허용
                         .requestMatchers(new AntPathRequestMatcher("/api/hello")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/authenticate")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/reissue")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
                         // 나머지 요청은 모두 인증

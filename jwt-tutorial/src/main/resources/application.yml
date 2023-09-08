@@ -12,6 +12,15 @@ spring:
         show_sql: true
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+  redis:
+    #    lettuce:
+    #      pool:
+    #        max-active: 10
+    #        max-idle: 10
+    #        min-idle: 2
+    port: 6379
+    host: localhost
+#    password: 'abcde'
 
 jwt:
   header: Authorization

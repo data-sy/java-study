@@ -1,13 +1,15 @@
 package com.jwt.jwttutorial.service;
 
-import com.jwt.jwttutorial.redis.UnauthorizedException;
+import com.jwt.jwttutorial.exception.UnauthorizedException;
 import com.jwt.jwttutorial.jwt.JwtToken;
 import com.jwt.jwttutorial.jwt.TokenProvider;
 import com.jwt.jwttutorial.redis.RedisUtil;
+import com.jwt.jwttutorial.util.SecurityUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -38,34 +40,46 @@ public class AuthService {
     /**
      * reissue : 토큰 재발급
      */
+    @Transactional
     public JwtToken reissue(String accessToken, String refreshToken) {
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new UnauthorizedException("유효하지 않은 RefreshToken 입니다");
         }
-        Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+        // accessToken에서 email 가져오기
+        String userEmail = tokenProvider.getEmail(accessToken);
+        System.out.println("재발급 검증 시 이메일 추출 : " + userEmail);
 
-//        // 이 과정 다른데에 있는 거 같은데 확인
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        String authorities = getAuthorities(authentication);
+        // refreshToken 검증 후 새 토큰 발급
+        if (redisUtil.hasKey(userEmail) && refreshToken.equals(redisUtil.get(userEmail))){
+            // 기존 accessToken 블랙리스트에 넣고
+            redisUtil.setBlackList(accessToken, "logout", tokenProvider.getExpiration(refreshToken));
+            // 새 토큰 발급
+            Authentication authentication = tokenProvider.getAuthentication(accessToken);
+            JwtToken newToken = tokenProvider.generateToken(authentication);
+            String newRefreshToken = newToken.getRefreshToken();
+            // 새 토큰 RedisDB에 저장
+            redisUtil.set(authentication.getName(), newRefreshToken, tokenProvider.getExpiration(newRefreshToken));
 
-        // 권한을 만들어서 토큰한테 넘겨줘
-        JwtToken token = tokenProvider.generateToken(authentication);
-
-        return token;
+            return newToken;
+        } else throw new UnauthorizedException("유효하지 않은 RefreshToken 입니다");
 
     }
 
-//    // 이거는 다른데에 있는 거 같아서 우선
-//    // 권한 가져오기
-//    public String getAuthorities(Authentication authentication) {
-//        return authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.joining(","));
-//    }
-
+    @Transactional
     public void logout(String accessToken, String refreshToken) {
-        redisUtil.setBlackList(accessToken, "accessToken", 1800);
-        redisUtil.setBlackList(refreshToken, "refreshToken", 60400);
-    }
+//        // accessToken 유효성 검사
+//        if (!tokenProvider.validateToken(accessToken)) {
+//            throw new UnauthorizedException("유효하지 않은 AccessToken 입니다");
+//        }
+        // accessToken에서 email 가져오기
+        String userEmail = SecurityUtil.getCurrentUserEmail().orElse("");
+//        String userEmail = tokenProvider.getEmail(accessToken);
+        System.out.println("로그아웃 시 이메일 추출 : " + userEmail);
 
+        boolean isDelete = redisUtil.delete(userEmail);
+        redisUtil.setBlackList(accessToken, "logout", tokenProvider.getExpiration(accessToken));
+
+        System.out.println("로그아웃 완료 : " + isDelete);
+
+    }
 }

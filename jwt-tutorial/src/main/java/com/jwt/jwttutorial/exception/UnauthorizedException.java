@@ -1,4 +1,4 @@
-package com.jwt.jwttutorial.redis;
+package com.jwt.jwttutorial.exception;
 
 public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException() {

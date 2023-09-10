@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String userEmail) {
         return usersRepository.findOneWithAuthoritiesByUserEmail(userEmail)
                 .map(user -> createUser(userEmail, user))
-                .orElseThrow(() -> new UsernameNotFoundException(userEmail + " -> 데이터베이스에서 찾을 수 없습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException(userEmail + " -> 해당하는 유저를 찾을 수 없습니다."));
     }
 
     private org.springframework.security.core.userdetails.User createUser(String userEmail, Users user) {

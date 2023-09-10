@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class RedisUtilTest {
     final String KEY = "key";
     final String VALUE = "value";
-    final int MINUTES = 1;
-//    final Duration DURATION = Duration.ofMillis(5000);
+    final long MILLISECONDS = 10*1000;
+
     @Autowired
     private RedisUtil redisUtil;
 
     @BeforeEach
     void shutDown() {
-        redisUtil.set(KEY, VALUE, MINUTES);
+        redisUtil.set(KEY, VALUE, MILLISECONDS);
     }
 
     @AfterEach
@@ -45,7 +45,7 @@ class RedisUtilTest {
     void updateTest() throws Exception {
         // given
         String updateValue = "updateValue";
-        redisUtil.set(KEY, updateValue, MINUTES);
+        redisUtil.set(KEY, updateValue, MILLISECONDS);
 
         // when
         Object findValue = redisUtil.get(KEY);
@@ -69,11 +69,11 @@ class RedisUtilTest {
     @Test
     @DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
     void expiredTest() throws Exception {
-        redisUtil.set(KEY, VALUE, MINUTES);
+        redisUtil.set(KEY, VALUE, MILLISECONDS);
         Object retrievedValue = redisUtil.get(KEY);
         assertEquals(VALUE, retrievedValue);
         // 데이터가 만료되기를 기다림
-        Thread.sleep(2*60*1000);
+        Thread.sleep(20*1000);
         // 만료된 데이터를 다시 가져왔을 때
         Object expiredValue = redisUtil.get(KEY);
         // null 이어야 함

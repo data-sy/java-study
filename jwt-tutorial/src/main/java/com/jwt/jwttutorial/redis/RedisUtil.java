@@ -1,5 +1,6 @@
 package com.jwt.jwttutorial.redis;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -7,22 +8,24 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+
 @Component
+@RequiredArgsConstructor
 public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, Object> redisBlackListTemplate;
 
-    RedisUtil(
-            RedisTemplate<String, Object> redisTemplate,
-            @Qualifier("redisBlackListTemplate") RedisTemplate<String, Object> redisBlackListTemplate) {
-        this.redisTemplate = redisTemplate;
-        this.redisBlackListTemplate = redisBlackListTemplate;
-    }
+//    RedisUtil(
+//            RedisTemplate<String, Object> redisTemplate,
+//            @Qualifier("redisBlackListTemplate") RedisTemplate<String, Object> redisBlackListTemplate) {
+//        this.redisTemplate = redisTemplate;
+//        this.redisBlackListTemplate = redisBlackListTemplate;
+//    }
 
-    public void set(String key, Object o, int minutes) {
+    public void set(String key, Object o, long duration) {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
-        redisTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, o, duration, TimeUnit.MILLISECONDS);
     }
 
     public Object get(String key) {
@@ -37,9 +40,9 @@ public class RedisUtil {
         return redisTemplate.hasKey(key);
     }
 
-    public void setBlackList(String key, Object o, int minutes) {
+    public void setBlackList(String key, Object o, long duration) {
         redisBlackListTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
-        redisBlackListTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
+        redisBlackListTemplate.opsForValue().set(key, o, duration, TimeUnit.MILLISECONDS);
     }
 
     public Object getBlackList(String key) {

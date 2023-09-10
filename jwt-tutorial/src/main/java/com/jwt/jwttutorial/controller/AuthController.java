@@ -5,7 +5,6 @@ import com.jwt.jwttutorial.dto.TokenDTO;
 import com.jwt.jwttutorial.jwt.JwtFilter;
 import com.jwt.jwttutorial.jwt.JwtToken;
 import com.jwt.jwttutorial.service.AuthService;
-import com.jwt.jwttutorial.service.TokenConverter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +23,14 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<TokenDTO> authorize(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         JwtToken token = authService.authorize(loginDTO.getUserEmail(), loginDTO.getUserPassword());
-        TokenDTO tokenDTO = TokenConverter.convertToDTO(token);
 
         // 토큰을 Response Header에도 넣어주자
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + token);
 
-        return new ResponseEntity<>(tokenDTO, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(TokenDTO.from(token), httpHeaders, HttpStatus.OK);
     }
 
     /**
@@ -41,13 +39,12 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity<TokenDTO> reissue(@Valid @RequestBody TokenDTO request) {
         JwtToken token = authService.reissue(request.getAccessToken(), request.getRefreshToken());
-        TokenDTO tokenDTO = TokenConverter.convertToDTO(token);
 
-        // 토큰을 Response Header에도 넣어주자
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + token);
 
-        return new ResponseEntity<>(tokenDTO, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(TokenDTO.from(token), httpHeaders, HttpStatus.OK);
+
     }
 
     /**

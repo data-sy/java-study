@@ -1,6 +1,6 @@
 package com.jwt.jwttutorial.jwt;
 
-import com.jwt.jwttutorial.redis.UnauthorizedException;
+import com.jwt.jwttutorial.exception.UnauthorizedException;
 import com.jwt.jwttutorial.redis.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -56,21 +56,25 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        //Access Token 생성 (만료시간 30분)
+        //Access Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim("token_type", "access")
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
                 .compact();
 
-        //Refresh Token 생성 (만료시간 3일)
+        //Refresh Token 생성
         String refreshToken = Jwts.builder()
-                // 여기에도 겟네임 해줘야 하나? 나중에 안 되면 여기 문제일 수 있음 (아래 getAuthentication에서 getSubject를 하므로 필요할 듯!)
                 .setSubject(authentication.getName())
+                .claim("token_type", "refresh")
                 .signWith(key)
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
                 .compact();
+
+        //Refresh Token RedisDB에 저장
+        redisUtil.set(authentication.getName(), refreshToken, getExpiration(refreshToken));
 
         return JwtToken.builder()
                 .grantType("Bearer")
@@ -97,13 +101,20 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    // 토큰의 타입 반환
+    public String getTokenType(String token){
+        Claims claims = parseClaims(token);
+        System.out.println("토큰의 타입 : " + claims.get("token_type", String.class));
+        return claims.get("token_type", String.class);
+    }
+
     // 토큰의 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             logger.info("validate 들어옴");
             if (redisUtil.hasKeyBlackList(token)) {
-                throw new UnauthorizedException("이미 탈퇴한 회원입니다"); //////////// 로그아웃 아닌가??
+                throw new UnauthorizedException("로그아웃한 상태입니다.");
             }
             return true;
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
@@ -115,7 +126,7 @@ public class TokenProvider {
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty. JWT 토큰이 잘못되었습니다.", e);
         } catch (UnauthorizedException e) {
-            logger.info("이미 탈퇴한 회원입니다.");
+            logger.info("로그아웃한 상태입니다.");
         }
         return false;
     }
@@ -127,4 +138,19 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+    // 토큰의 유효시간
+    public Long getExpiration(String token) {
+        Date expiration = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration();
+        // 현재 시간
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
+    }
+
+    // 토큰에서 Email 추출
+    public String getEmail(String token){
+        Authentication authentication = getAuthentication(token);
+        return authentication.getName();
+    }
+
 }

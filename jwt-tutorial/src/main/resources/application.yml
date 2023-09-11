@@ -31,7 +31,7 @@ jwt:
 #  access-token-validity-in-seconds: 1800
 #  refresh-token-validity-in-seconds: 604800
   # 테스트로 1분 / 10분
-  access-token-validity-in-seconds: 60
+  access-token-validity-in-seconds: 30
   refresh-token-validity-in-seconds: 600
 
 #  token-validity-in-seconds: 86400

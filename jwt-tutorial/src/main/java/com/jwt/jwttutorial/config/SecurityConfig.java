@@ -76,7 +76,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/authenticate")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/reissue")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
+//                        .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
                         // 나머지 요청은 모두 인증
                         .anyRequest().authenticated()
                 )

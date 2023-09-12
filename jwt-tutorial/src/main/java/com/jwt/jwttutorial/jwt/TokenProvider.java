@@ -1,7 +1,7 @@
 package com.jwt.jwttutorial.jwt;
 
 import com.jwt.jwttutorial.exception.UnauthorizedException;
-import com.jwt.jwttutorial.redis.RedisUtil;
+import com.jwt.jwttutorial.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +59,6 @@ public class TokenProvider {
         //Access Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("token_type", "access")
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
@@ -67,8 +66,6 @@ public class TokenProvider {
 
         //Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("token_type", "refresh")
                 .signWith(key)
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
                 .compact();

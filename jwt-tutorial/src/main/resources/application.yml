@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: oauth2
   datasource:
     url: "jdbc:mysql://localhost/jwt"
     username: "root"
@@ -26,10 +28,10 @@ jwt:
   header: Authorization
   # HS512 ( 512bit = 64byte secret key )
   # HS256
-#  secret: {secret key}
+  #  secret: {secret key}
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-#  access-token-validity-in-seconds: 1800
-#  refresh-token-validity-in-seconds: 604800
+  #  access-token-validity-in-seconds: 1800
+  #  refresh-token-validity-in-seconds: 604800
   # 테스트로 1분 / 10분
   access-token-validity-in-seconds: 30
   refresh-token-validity-in-seconds: 600
@@ -39,3 +41,4 @@ jwt:
 logging:
   level:
     com.jwt: DEBUG
+

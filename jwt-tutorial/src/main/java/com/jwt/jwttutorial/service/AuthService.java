@@ -3,7 +3,7 @@ package com.jwt.jwttutorial.service;
 import com.jwt.jwttutorial.exception.UnauthorizedException;
 import com.jwt.jwttutorial.jwt.JwtToken;
 import com.jwt.jwttutorial.jwt.TokenProvider;
-import com.jwt.jwttutorial.redis.RedisUtil;
+import com.jwt.jwttutorial.util.RedisUtil;
 import com.jwt.jwttutorial.util.SecurityUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

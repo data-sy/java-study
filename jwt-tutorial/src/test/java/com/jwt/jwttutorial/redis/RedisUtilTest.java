@@ -1,5 +1,6 @@
 package com.jwt.jwttutorial.redis;
 
+import com.jwt.jwttutorial.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

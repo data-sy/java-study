@@ -1,5 +1,6 @@
 package com.jwt.jwttutorial.service;
 
+import com.jwt.jwttutorial.entity.UserPrincipal;
 import com.jwt.jwttutorial.entity.Users;
 import com.jwt.jwttutorial.repository.UsersRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,10 +30,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(final String userEmail) {
         return usersRepository.findOneWithAuthoritiesByUserEmail(userEmail)
-                .map(user -> createUser(userEmail, user))
+                .map(user -> new UserPrincipal(createUser(userEmail, user)))
                 .orElseThrow(() -> new UsernameNotFoundException(userEmail + " -> 해당하는 유저를 찾을 수 없습니다."));
     }
 
+    // DB Users -> UserDetails
+    // (지금, 디비->디테일->프린시펄 3단계로 가는데 이거 그냥 디비에서 프린시펄로 가게 하면 좋을 듯)
+    // 그런 의도로 프린시펄 만든거니까...
+    // 물론 여기서 private뒤에 붙는 건 여전히 디테일 - 즉 선언은 디테일
+    // 생성은 프린시펄로 하도록 여기서 끝내자
     private org.springframework.security.core.userdetails.User createUser(String userEmail, Users user) {
         if (!user.isActivated()) {
             throw new RuntimeException(userEmail + " -> 활성화되어 있지 않습니다.");
@@ -46,4 +52,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getUserPassword(),
                 grantedAuthorities);
     }
+
 }

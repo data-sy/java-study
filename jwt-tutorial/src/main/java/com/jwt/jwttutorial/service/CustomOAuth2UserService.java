@@ -3,7 +3,8 @@ package com.jwt.jwttutorial.service;
 
 import com.jwt.jwttutorial.dto.OAuth2UserInfo;
 import com.jwt.jwttutorial.dto.OAuth2UserInfoFactory;
-import com.jwt.jwttutorial.entity.Users;
+import com.jwt.jwttutorial.entity.*;
+import com.jwt.jwttutorial.repository.UserAuthorityRepository;
 import com.jwt.jwttutorial.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.security.AuthProvider;
+import java.util.Collections;
 
 @Slf4j
 @Service
@@ -25,12 +26,15 @@ import java.security.AuthProvider;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UsersRepository usersRepository;
+    private final UserAuthorityRepository userAuthorityRepository;
 
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("CustomOAuth2UserService.loadUser() 실행 - OAuth2 로그인 요청 진입");
         OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+
         // 최종적으로 여기서 princibal 객체가 생성되면 돼
         return processOAuth2User(userRequest, oAuth2User);
     }
@@ -49,37 +53,55 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // provider
         //이미 가입된 경우
         if (user != null) {
-            if (!user.getProvider().equals(authProvider)) {
+            if (!user.getAuthProvider().equals(authProvider)) {
                 throw new RuntimeException("Email already signed up.");
             }
             // 유저가 있고, 프로바이더도 잘 맞으면 실행 => 즉 정상적으로 로그인 했을 때 실행하는 부분
-            // 뭔지는 아직 안 봄
-            // 아마 추출한 DB유저 객체에 구글로그인 정보 합친다는 거겠지
-            // 이거 끝내고 return으로 가
-            user = updateUser(user, oAuth2UserInfo);
+            // sub만 추가하면 돼
+            user.setOauth2Id(oAuth2UserInfo.getOAuth2Id());
+            user = usersRepository.save(user);
         }
         //가입되지 않은 경우
         else {
             user = registerUser(authProvider, oAuth2UserInfo);
         }
-        // 이 크리에이트는 다른걸로 바뀌어야 할 듯. 아마 생성자?
-        return UserPrincipal.create(user, oAuth2UserInfo.getAttributes());
+        return new UserPrincipal(user, oAuth2UserInfo.getAttributes());
     }
 
     private Users registerUser(AuthProvider authProvider, OAuth2UserInfo oAuth2UserInfo) {
-        // 여기가 회원가입 부분 - UserService의 회원가입 부분 참고 - 아니면 둘도 하나로 만들어서 통일?
+        // OAuth회원 회원가입
+        // 리팩토링 : UserService의 signup메서드와 유사하므로 나중에 둘 합쳐도 될 듯
+        System.out.println("인포에 있는 데이터들 authProvider : " + authProvider);
+        System.out.println("인포에 있는 데이터들 getOAuth2Id : " + oAuth2UserInfo.getOAuth2Id());
+        System.out.println("인포에 있는 데이터들 getName : " + oAuth2UserInfo.getName());
+        System.out.println("인포에 있는 데이터들 getEmail : " + oAuth2UserInfo.getEmail());
+        System.out.println("인포에 있는 데이터들 getAttributes : " + oAuth2UserInfo.getAttributes().toString());
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_USER")
+                .build();
+        UserAuthority userAuthority = UserAuthority.builder()
+                .authority(authority)
+                .build();
         Users user = Users.builder()
                 .userEmail(oAuth2UserInfo.getEmail())
                 .userName(oAuth2UserInfo.getName())
                 .oauth2Id(oAuth2UserInfo.getOAuth2Id())
                 .authProvider(authProvider)
-                .role(Role.ROLE_USER)
+                .userAuthoritySet(Collections.singleton(userAuthority))
+                .activated(true)
                 .build();
+        Users saveUser = usersRepository.save(user);
 
-        return userRepository.save(user);
+        // user_authority 테이블에 user_id 갱신
+        user.setUserId(saveUser.getUserId());
+        userAuthority.setUser(user);
+        userAuthorityRepository.save(userAuthority);
+
+        return saveUser;
     }
 
-    private Users updateUser(Users user, OAuth2UserInfo oAuth2UserInfo) {
-        return usersRepository.save(user.update(oAuth2UserInfo));
-    }
+//    private Users updateUser(Users user, OAuth2UserInfo oAuth2UserInfo) {
+//        return usersRepository.save(user.update(oAuth2UserInfo));
+//    }
+
 }

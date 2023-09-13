@@ -1,9 +1,7 @@
 package com.jwt.jwttutorial.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jwt.jwttutorial.dto.OAuth2UserInfo;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,12 +32,18 @@ public class Users {
     @JsonIgnore
     private boolean activated;
 
-    // oauth 하면서 계속 추가해 나가자
-    private String provider;
+    // OAuth로 추가된 컬럼
+    @JsonIgnore
+    private String oauth2Id;
+
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider; // GOOGLE, NAVER, KAKAO
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserAuthority> userAuthoritySet = new HashSet<>();
 
 //    public Object update(OAuth2UserInfo oAuth2UserInfo) {
+    // 오우스서비스에서 사용될거야. 들어온 유저에게 인포 담아주는
 //    }
 }

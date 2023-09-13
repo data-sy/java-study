@@ -9,6 +9,7 @@ import java.util.Map;
 @AllArgsConstructor
 public abstract class OAuth2UserInfo {
 
+    // protected : 추상클래스를 상속받는 클래스에서만 사용할 수 있도록
     protected Map<String, Object> attributes;
 
     public abstract String getOAuth2Id();

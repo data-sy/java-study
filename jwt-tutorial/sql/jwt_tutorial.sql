@@ -23,6 +23,8 @@ CREATE TABLE users (
 	user_name VARCHAR(20),
 	user_phone VARCHAR(20),
     activated TINYINT,
+    oauth2_id VARCHAR(20),
+    auth_provider VARCHAR(20),
 	PRIMARY KEY (user_id)
 );
 CREATE TABLE authority (

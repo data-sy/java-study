@@ -21,8 +21,8 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");    // 뷰
         configuration.addAllowedOrigin("http://localhost:5000");    // 플라스크
-//        // oauth2.0 콜백을 위해 내 도메인을 열어둠
-//        configuration.addAllowedOrigin("http://localhost:8080");
+        configuration.addAllowedOrigin("http://localhost:5000");    // 플라스크
+//        // oauth2.0 콜백을 위해 뭘 열어둬야 할까
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

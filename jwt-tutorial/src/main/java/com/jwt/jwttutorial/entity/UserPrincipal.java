@@ -1,43 +1,55 @@
 package com.jwt.jwttutorial.entity;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UserPrincipal implements UserDetails, OAuth2User {
 
-    private User user;
-//    private List<GrantedAuthority> authorities;
+    private Users user;
 
     private Map<String, Object> oauthUserAttributes;
 
-    // UserDetails -> UserPrincipal
-    public UserPrincipal(User user) {
-        this.user=user;
+    public UserPrincipal(Users user) {
+        this.user = user;
     }
 
-    // 일반 로그인
-    // oauth 로그인
-
-    // from UserDetails
-    @Override
-    public String getUsername() {
-        return String.valueOf(user.getUsername());
+    public UserPrincipal(Users user, Map<String, Object> oauthUserAttributes) {
+        this.user = user;
+        this.oauthUserAttributes = oauthUserAttributes;
     }
 
     @Override
-    public String getPassword() {
-        return user.getPassword();
+    public String getName() {
+        return String.valueOf(user.getUserEmail());
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(oauthUserAttributes);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getAuthorities();
+        return user.getUserAuthoritySet().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority().getAuthorityName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getUserPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return String.valueOf(user.getUserEmail());
     }
 
     @Override
@@ -60,16 +72,11 @@ public class UserPrincipal implements UserDetails, OAuth2User {
         return true;
     }
 
-    // from OAuth2User
-    @Override
-    public String getName() {
-        return String.valueOf(user.getUsername());
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return Collections.unmodifiableMap(oauthUserAttributes);
-    }
-
+//    @Override
+//    @Nullable
+//    @SuppressWarnings("unchecked")
+//    public <A> A getAttribute(String name) {
+//        return (A) oauthUserAttributes.get(name);
+//    }
 
 }

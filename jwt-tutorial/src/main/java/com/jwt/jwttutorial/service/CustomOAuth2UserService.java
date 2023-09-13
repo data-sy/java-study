@@ -43,6 +43,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         //OAuth2 로그인 플랫폼 구분
         AuthProvider authProvider = AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, oAuth2User.getAttributes());
+        System.out.println("인포에 있는 데이터들 authProvider : " + authProvider);
+        System.out.println("인포에 있는 데이터들 getOAuth2Id : " + oAuth2UserInfo.getOAuth2Id());
+        System.out.println("인포에 있는 데이터들 getName : " + oAuth2UserInfo.getName());
+        System.out.println("인포에 있는 데이터들 getEmail : " + oAuth2UserInfo.getEmail());
+        System.out.println("인포에 있는 데이터들 getAttributes : " + oAuth2UserInfo.getAttributes().toString());
 
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new RuntimeException("Email not found from OAuth2 provider");
@@ -58,6 +63,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             }
             // 유저가 있고, 프로바이더도 잘 맞으면 실행 => 즉 정상적으로 로그인 했을 때 실행하는 부분
             // sub만 추가하면 돼
+            // 업데이를 왜 하는거지?????
             user.setOauth2Id(oAuth2UserInfo.getOAuth2Id());
             user = usersRepository.save(user);
         }

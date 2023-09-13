@@ -92,7 +92,7 @@ public class SecurityConfig {
                     .requestMatchers(new AntPathRequestMatcher("/api/reissue")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/oauth2/**")).permitAll()
 
                         // 나머지 요청은 모두 인증
                     .anyRequest().authenticated()

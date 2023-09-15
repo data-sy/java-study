@@ -41,6 +41,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     protected OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         //OAuth2 로그인 플랫폼 구분
+        String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
         AuthProvider authProvider = AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, oAuth2User.getAttributes());
         System.out.println("인포에 있는 데이터들 authProvider : " + authProvider);
@@ -54,16 +55,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
 
         Users user = usersRepository.findOneWithAuthoritiesByUserEmail(oAuth2UserInfo.getEmail()).orElse(null);
-        // users에 다른 컬럼들 추가해야 할 듯
-        // provider
         //이미 가입된 경우
         if (user != null) {
             if (!user.getAuthProvider().equals(authProvider)) {
                 throw new RuntimeException("Email already signed up.");
             }
             // 유저가 있고, 프로바이더도 잘 맞으면 실행 => 즉 정상적으로 로그인 했을 때 실행하는 부분
-            // sub만 추가하면 돼
-            // 업데이를 왜 하는거지?????
+            // 업데이트가 왜 있는거지?..서드파티 쪽에서 수정사항이 있으면 여기에도 수정되도록?
+            // 그러면 id 말고도 더 셋 해야 함 (이메일, 네임, 아이디, 프로바이더 - 밑에 회원가입 참고)
             user.setOauth2Id(oAuth2UserInfo.getOAuth2Id());
             user = usersRepository.save(user);
         }
@@ -77,11 +76,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private Users registerUser(AuthProvider authProvider, OAuth2UserInfo oAuth2UserInfo) {
         // OAuth회원 회원가입
         // 리팩토링 : UserService의 signup메서드와 유사하므로 나중에 둘 합쳐도 될 듯
-        System.out.println("인포에 있는 데이터들 authProvider : " + authProvider);
-        System.out.println("인포에 있는 데이터들 getOAuth2Id : " + oAuth2UserInfo.getOAuth2Id());
-        System.out.println("인포에 있는 데이터들 getName : " + oAuth2UserInfo.getName());
-        System.out.println("인포에 있는 데이터들 getEmail : " + oAuth2UserInfo.getEmail());
-        System.out.println("인포에 있는 데이터들 getAttributes : " + oAuth2UserInfo.getAttributes().toString());
+        System.out.println("회원가입 authProvider : " + authProvider);
+        System.out.println("회원가입 getOAuth2Id : " + oAuth2UserInfo.getOAuth2Id());
+        System.out.println("회원가입 getName : " + oAuth2UserInfo.getName());
+        System.out.println("회원가입 getEmail : " + oAuth2UserInfo.getEmail());
+        System.out.println("회원가입 getAttributes : " + oAuth2UserInfo.getAttributes().toString());
         Authority authority = Authority.builder()
                 .authorityName("ROLE_USER")
                 .build();

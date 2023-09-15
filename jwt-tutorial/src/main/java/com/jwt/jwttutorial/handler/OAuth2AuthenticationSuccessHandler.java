@@ -63,7 +63,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
         //JWT 생성
-        // jwt를 내부에서 생성하는겨? 그러면 토큰 DTO로 반납
         JwtToken token = tokenProvider.generateToken(authentication);
         System.out.println("핸들러에서 토큰 잘 생성 됐는지 : " + token.toString());
         // 원래 있던 코드

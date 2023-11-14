@@ -12,3 +12,9 @@ spring:
         show_sql: true
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+  neo4j:
+    authentication:
+      username: neo4j
+      password: testtest
+    uri: neo4j://localhost:7474
+

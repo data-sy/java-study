@@ -4,17 +4,16 @@ spring:
     username: "root"
     password: "Show0715!"
     driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+#  jpa:
+#    hibernate:
+#      ddl-auto: none
+#    properties:
+#      hibernate:
+#        show_sql: true
+#        format_sql: true
+#        dialect: org.hibernate.dialect.MySQL8Dialect
   neo4j:
     authentication:
       username: neo4j
       password: testtest
-    uri: neo4j://localhost:7474
-
+    uri: bolt://localhost:7687

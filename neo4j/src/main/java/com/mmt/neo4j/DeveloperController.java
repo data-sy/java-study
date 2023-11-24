@@ -1,7 +1,5 @@
-package com.mmt.neo4j.controller;
+package com.mmt.neo4j;
 
-import com.mmt.neo4j.entity.Developer;
-import com.mmt.neo4j.service.DeveloperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +11,8 @@ public class DeveloperController {
     private DeveloperService developerService;
 
     @GetMapping("/")
-    public Developer findAmud() {
-        return developerService.findAmud();
+    public  Developer findAmud(){
+        return  developerService.findAmud();
     }
+
 }

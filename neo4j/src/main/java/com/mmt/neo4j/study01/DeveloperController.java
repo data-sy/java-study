@@ -18,7 +18,7 @@
 //        return  developerService.findAmud();
 //    }
 //
-//    @GetMapping("/friend")
+//    @GetMapping("/cindy-friends")
 //    public Developer findCindyFriend(){
 //        return  developerService.findCindyFriend();
 //    }

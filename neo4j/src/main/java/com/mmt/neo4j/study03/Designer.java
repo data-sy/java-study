@@ -1,5 +1,6 @@
 package com.mmt.neo4j.study03;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -19,7 +20,7 @@ public class Designer {
     private String country;
     private int age;
     @Relationship(type = "IS_FRIEND", direction = INCOMING)
-    private Set<Designer> friends = new HashSet<>();
+    private Set<IsFriend> friends = new HashSet<>();
 
     public Designer(String name, String country, int age){
         this.name = name;

@@ -24,6 +24,11 @@ public class DeveloperController {
         return  developerService.findRobin();
     }
 
+    @GetMapping("/")
+    public Developer findFriend(@RequestParam String name){
+        return  developerService.findFriend(name);
+    }
+
     // 원하는 깊이까지의 노드들 찾을 수 있음
     @GetMapping("/node")
     public Flux<Developer> findNodes(@RequestParam String name){

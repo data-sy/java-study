@@ -18,6 +18,9 @@ public class DeveloperService {
     public Developer findRobin(){
         return developerRepository.findOneByName("robin").block();
     }
+    public Developer findFriend(String name){
+        return developerRepository.findOneByName(name).block();
+    }
 
     public Flux<Developer> findNodes(String name){
         return developerRepository.findNodes(name);

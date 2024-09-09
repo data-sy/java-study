@@ -1,2 +1,4 @@
+.gitignore
 /DoitFirstCoding/
 /jwt-tutorial/src/main/resources/application-oauth2.yml
+.idea/*

@@ -16,7 +16,6 @@ public interface DeveloperRepository extends ReactiveNeo4jRepository<Developer, 
 
 //    @Query("MATCH path = (start_node)-[*1..4]->(n {name: $name}) RETURN nodes(path), relationships(path)")
 //    Flux<PathResult> findNodesAndRelationships(@Param("name") String name);
-
     @Query("MATCH (n:Developer) RETURN [name IN n.name] AS names")
     Flux<String> findNames();
 

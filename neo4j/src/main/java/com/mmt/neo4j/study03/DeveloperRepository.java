@@ -19,4 +19,5 @@ public interface DeveloperRepository extends ReactiveNeo4jRepository<Developer, 
     @Query("MATCH (n:Developer) RETURN [name IN n.name] AS names")
     Flux<String> findNames();
 
+    
 }

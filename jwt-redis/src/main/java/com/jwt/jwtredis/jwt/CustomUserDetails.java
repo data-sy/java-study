@@ -47,6 +47,7 @@ public class CustomUserDetails extends Member implements UserDetails {
         return new CustomUserDetails(email, password, role);
     }
 
+    
     @Override
     public List<GrantedAuthority> getAuthorities() {
         return CustomAuthorityUtils.createAuthorities(role);

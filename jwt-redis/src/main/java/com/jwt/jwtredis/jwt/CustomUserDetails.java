@@ -34,20 +34,16 @@ public class CustomUserDetails extends Member implements UserDetails {
         this.password = password;
         this.role = role;
     }
-
     public static CustomUserDetails of(Member member) {
         return new CustomUserDetails(member);
     }
-
     public static CustomUserDetails of(String email, String role) {
         return new CustomUserDetails(email, role);
     }
-
     public static CustomUserDetails of(String email, String password, String role) {
         return new CustomUserDetails(email, password, role);
     }
 
-    
     @Override
     public List<GrantedAuthority> getAuthorities() {
         return CustomAuthorityUtils.createAuthorities(role);

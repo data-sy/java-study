@@ -28,7 +28,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AES128Config aes128Config;
     private final MemberService memberService;
     private final RedisService redisService;
-
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,

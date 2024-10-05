@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtTokenProvider.refresshTokenSetHeader(encryptedRefreshToken, response);
         Member findMember = memberService.findMemberAndCheckMemberExists(customUserDetails.getId());
         Responder.loginSuccessResponse(response, findMember);
-
         
         // 로그인 성공시 Refresh Token Redis 저장 ( key = Email / value = Refresh Token )
         long refreshTokenExpirationMillis = jwtTokenProvider.getRefreshTokenExpirationMillis();
